@@ -1,0 +1,97 @@
+-- 1.
+
+CREATE TABLE Centre (
+CentreID VARCHAR(1) NOT NULL PRIMARY KEY,
+Name VARCHAR(100) NOT NULL, 
+Address VARCHAR(100) NOT NULL,
+PhoneNo VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE Car (
+CarID VARCHAR(3) NOT NULL PRIMARY KEY,
+RegNo VARCHAR(20) NOT NULL, 
+Model VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE School (
+SchoolID VARCHAR(1) NOT NULL PRIMARY KEY,
+Address VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE AdminStaff (
+EmpID VARCHAR(4) NOT NULL PRIMARY KEY,
+Forename VARCHAR(100) NOT NULL,
+Surname VARCHAR(100) NOT NULL,
+Gender VARCHAR(1) NOT NULL,
+PhoneNo VARCHAR(20) NOT NULL,
+Address VARCHAR(100) NOT NULL,
+Role VARCHAR(100) NOT NULL,
+SchoolID VARCHAR(1),
+FOREIGN KEY (SchoolID) REFERENCES School(SchoolID)
+);
+
+CREATE TABLE Instructor (
+EmpID VARCHAR(4) NOT NULL PRIMARY KEY,
+Forename VARCHAR(100) NOT NULL,
+Surname VARCHAR(100) NOT NULL,
+Gender VARCHAR(1) NOT NULL,
+PhoneNo VARCHAR(20) NOT NULL,
+Address VARCHAR(100) NOT NULL,
+LicenceNo VARCHAR(20) NOT NULL,
+SchoolID VARCHAR(1),
+CarID VARCHAR(3),
+FOREIGN KEY (SchoolID) REFERENCES School(SchoolID),
+FOREIGN KEY (CarID) REFERENCES Car(CarID)
+);
+
+INSERT INTO Centre VALUES('1', 'Canterbury', '12 Meryl Street', '+44 1227-968-5287');
+INSERT INTO Centre VALUES('2','Whitstable', '5 The Strand, Whitstable', '01227457012');
+INSERT INTO Centre VALUES('3','Faversham', '1 High Street', '01795 865129');
+
+INSERT INTO Car VALUES('124', 'BD51 SMR', 'VW Polo');
+INSERT INTO Car VALUES('653', 'WS62 QWE', 'Ford Focus');
+INSERT INTO Car VALUES('912', 'FD52 TGF', 'VW Polo');
+INSERT INTO Car VALUES('167', 'FD52 YTR', 'VW Polo');
+
+INSERT INTO School VALUES('1', '12 Whitechapel, Canterbury');
+INSERT INTO School VALUES('2', '9 Middle Wall, Whitstable');
+
+INSERT INTO AdminStaff VALUES('1006', 'Fred', 'Grimes', 'M', '012275435665', '27 Cherry Street', 'assistant', '2');
+INSERT INTO AdminStaff VALUES('1009', 'Jill', 'Joffries', 'F', '+44776618645', '27 Cherry Street', 'manager', '1');
+INSERT INTO AdminStaff VALUES('1019', 'Justine', 'Joffries', 'F', '(01227) 812035', '19 Creosote Road', 'assistant', '1');
+
+INSERT INTO Instructor VALUES('2009', 'James', 'Joffries', 'M', '012275435665', '27 Cherry Street', 'FTR76398', '1', '124');
+INSERT INTO Instructor VALUES('2011', 'Jim', 'Adams', 'M', '065490125674', '4 The Vale', 'TGY98555a', '2', '912');
+INSERT INTO Instructor VALUES('2013', 'Trinny', 'Vair', 'F', '0044587208725', '17 High Street, Chartham', 'YHF7665467', '1', '653');
+
+
+--2.a
+SELECT t.Status, COUNT(t.Status) FROM Test t, Client c WHERE t.ClientID = c.ClientID AND c.Gender = 'F' GROUP BY t.Status;
+
+-- 2.b
+SELECT EmpID, Forename, Surname FROM AdminStaff WHERE Surname = 'Joffries'
+UNION
+SELECT EmpID, Forename, Surname FROM Instructor WHERE Surname = 'Joffries';
+
+-- 2.c
+SELECT DISTINCT  s.Address, i.SchoolID, i.Forename, i.Surname FROM School s, Instructor i
+WHERE s.SchoolID = i.SchoolID
+EXCEPT
+SELECT DISTINCT s.Address, i.SchoolID, Forename, Surname FROM Instructor i, Lesson l, School s
+WHERE i.EmpID = l.EmpID AND s.SchoolID = i.SchoolID;
+
+-- 2.d
+SELECT DISTINCT ce.Name, t.OnDate, t.OnTime, t.Status, 
+cl.Forename, cl.Surname, s.Address, cr.Model
+FROM Test t, Centre ce, Client cl, School s, 
+Instructor i, Car cr
+WHERE t.CentreID = ce.CentreID 
+AND ce.Name ='Whitstable' 
+AND t.ClientID = cl.ClientID
+AND t.EmpID = i.EmpID
+AND s.SchoolID = i.SchoolID
+AND i.CarID = cr.CarID; 
+
+
+
+
