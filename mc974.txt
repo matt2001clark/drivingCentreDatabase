@@ -63,35 +63,3 @@ INSERT INTO AdminStaff VALUES('1019', 'Justine', 'Joffries', 'F', '(01227) 81203
 INSERT INTO Instructor VALUES('2009', 'James', 'Joffries', 'M', '012275435665', '27 Cherry Street', 'FTR76398', '1', '124');
 INSERT INTO Instructor VALUES('2011', 'Jim', 'Adams', 'M', '065490125674', '4 The Vale', 'TGY98555a', '2', '912');
 INSERT INTO Instructor VALUES('2013', 'Trinny', 'Vair', 'F', '0044587208725', '17 High Street, Chartham', 'YHF7665467', '1', '653');
-
-
---2.a
-SELECT t.Status, COUNT(t.Status) FROM Test t, Client c WHERE t.ClientID = c.ClientID AND c.Gender = 'F' GROUP BY t.Status;
-
--- 2.b
-SELECT EmpID, Forename, Surname FROM AdminStaff WHERE Surname = 'Joffries'
-UNION
-SELECT EmpID, Forename, Surname FROM Instructor WHERE Surname = 'Joffries';
-
--- 2.c
-SELECT DISTINCT  s.Address, i.SchoolID, i.Forename, i.Surname FROM School s, Instructor i
-WHERE s.SchoolID = i.SchoolID
-EXCEPT
-SELECT DISTINCT s.Address, i.SchoolID, Forename, Surname FROM Instructor i, Lesson l, School s
-WHERE i.EmpID = l.EmpID AND s.SchoolID = i.SchoolID;
-
--- 2.d
-SELECT DISTINCT ce.Name, t.OnDate, t.OnTime, t.Status, 
-cl.Forename, cl.Surname, s.Address, cr.Model
-FROM Test t, Centre ce, Client cl, School s, 
-Instructor i, Car cr
-WHERE t.CentreID = ce.CentreID 
-AND ce.Name ='Whitstable' 
-AND t.ClientID = cl.ClientID
-AND t.EmpID = i.EmpID
-AND s.SchoolID = i.SchoolID
-AND i.CarID = cr.CarID; 
-
-
-
-
